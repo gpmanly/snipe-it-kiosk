@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>{{ this.asset.manufacturer.name }} {{ this.asset.model.name }}</h2>
+    <h2 class="text-left">{{ this.asset.manufacturer.name }} {{ this.asset.model.name }} {{ this.asset.name }}</h2>
     <b-row class="mt-4" v-if="this.checkState == 0">
       <b-col>
         <b-table :items="items">
@@ -11,7 +11,7 @@
             <b-icon :icon="data.value" />
           </template>
         </b-table>
-        <img :src="this.asset.image" v-if="this.asset.image" />
+        <img :src="this.asset.image" v-if="this.asset.image" style="max-width: 400px; height: auto;" />
       </b-col>
       <b-col>
         <b-alert
@@ -19,8 +19,21 @@
           variant="info"
           v-if="this.asset.status_label.status_meta == 'deployed'"
         >
-          This asset is deployed to:<br />
-          {{ this.asset.assigned_to.name }} ({{ this.asset.assigned_to.type }})
+          <div class="d-flex align-items-center">
+            <!-- Avatar Image -->
+            <img
+              :src="this.asset.assigned_to.id"
+              v-if="this.asset.assigned_to.id"
+              alt="Assigned User Avatar"
+              class="rounded-circle"
+              width="40" height="40"
+            />
+            <!-- Assigned User Info -->
+            <div class="ml-2">
+              This asset is deployed to:<br />
+              {{ this.asset.assigned_to.name }} ({{ this.asset.assigned_to.type }})
+            </div>
+          </div>
         </b-alert>
         <b-alert
           show
@@ -110,11 +123,12 @@ export default {
     items: function () {
       let a = [
         { icon: "hdd", name: "Model number", value: this.asset.model_number },
+        { icon: "tag", name: "Asset tag", value: this.asset.asset_tag},
         { icon: "key", name: "Serial number", value: this.asset.serial },
         {
           icon: "map",
           name: "Location",
-          value: this.asset.location ? this.asset.location.name : "-",
+          value: this.asset.rtd_location ? this.asset.rtd_location.name : "-",
         },
       ];
       Object.keys(this.asset.custom_fields).forEach((i) => {
@@ -129,6 +143,10 @@ export default {
   },
   props: {
     asset: {
+      required: true,
+      type: Object,
+    },
+    users: {
       required: true,
       type: Object,
     },

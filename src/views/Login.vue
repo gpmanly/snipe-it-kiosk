@@ -37,7 +37,7 @@ export default {
             id: resp.data.id,
             superuser: resp.data.permissions.superuser == 1,
           });
-          window.location = "#/";
+          window.location = "#/scan";
         })
         .catch((e) => {
           this.showAlert = true;
