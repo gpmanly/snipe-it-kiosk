@@ -57,15 +57,19 @@ export default {
   width: 17px !important;
   height: 17px !important;
   margin-right: 8px;
+  font-family: 'Inter', sans-serif;
 }
 .spinner-big {
   width: 200px !important;
   height: 200px !important;
+  font-family: 'Inter', sans-serif;
 }
 .icon-big {
   font-size: 100px;
+  font-family: 'Inter', sans-serif;
 }
 .icon-text {
   font-size: 17px;
+  font-family: 'Inter', sans-serif;
 }
 </style>

@@ -76,6 +76,14 @@ function install(Vue) {
           throw new Error(resp);
         });
       },
+      getUserById: function (id) {
+        return self.$apiCall("GET", `/users/${id}`).then((resp) => {
+          if (resp.data && resp.data.id === id) {
+            return resp.data;
+          }
+          throw new Error(`User with ID ${id} not found.`);
+        });
+      },
     };
   };
 }
