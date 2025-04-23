@@ -22,6 +22,25 @@ Currently there are only limited features integrated, but there can be more in t
 - Copy the `config.default.json` to `config.json` and set the correct values
 - Add keys to log in & start a browser in kiosk-mode (like `chromium-browser`)
 
+### Install nodejs in Linux
+```bash
+# Download and install nvm:
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+
+# in lieu of restarting the shell
+\. "$HOME/.nvm/nvm.sh"
+
+# Download and install Node.js:
+nvm install 14
+
+# Verify the Node.js version:
+node -v # Should print "v14.21.3".
+nvm current # Should print "v14.21.3".
+
+# Verify npm version:
+npm -v # Should print "6.14.18".
+```
+
 ### Building from source
 To build the code from source, you need some requirements:
 - `nodejs` - tested with v14
@@ -29,8 +48,8 @@ To build the code from source, you need some requirements:
 - `git`
 run the following commands:
 ```bash
-git clone https://github.com/paul1278/snipe-it-kiosk.git
-cd snipe-it-kiosk
+git clone https://bitbucket.microchip.com/scm/caeprj/mph-ams-snipeit-kiosk.git
+cd mph-ams-snipeit-kiosk
 npm i
 npm run build
 ```
