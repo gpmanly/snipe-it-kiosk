@@ -19,14 +19,14 @@
           variant="info"
           v-if="this.asset.status_label.status_meta == 'deployed'"
         >
-          <div class="d-flex align-items-center">
+          <div class="text-center">
             <!-- Avatar Image -->
-            <img
-              :src="this.asset.assigned_to.id"
-              v-if="this.asset.assigned_to.id"
+            <img 
+              :src="user.avatar" 
+              v-if="user.avatar"
               alt="Assigned User Avatar"
               class="rounded-circle"
-              width="40" height="40"
+              width="auto" height="200"
             />
             <!-- Assigned User Info -->
             <div class="ml-2">
@@ -118,7 +118,13 @@ export default {
     checkState: 0, // 0: init, 1: loading, 2: success checkout, 3: success checkin, 4: error;
     locationOnCheckin: null,
     selectedUser: null,
+    user: {
+      avatar: null,
+    },
   }),
+  mounted: function() {
+    this.getUserAvatar();
+  },
   computed: {
     items: function () {
       let a = [
@@ -145,11 +151,7 @@ export default {
     asset: {
       required: true,
       type: Object,
-    },
-    users: {
-      required: true,
-      type: Object,
-    },
+    }
   },
   methods: {
     checkout: function (user) {
@@ -187,6 +189,23 @@ export default {
             this.$router.push("/scan");
           }, 1000);
           return;
+        })
+        .catch((e) => {
+          console.error(e);
+          this.checkState = 4;
+        });
+    },
+    getUserAvatar: function (user) {
+      let id = null;
+      if (user == null) {
+        id = this.$store.state.user.id;
+      } else {
+        id = user.id;
+      }
+      this.$apiCalls()
+        .getUserById(id)
+        .then((resp) => {
+          this.user.avatar = resp.avatar;
         })
         .catch((e) => {
           console.error(e);

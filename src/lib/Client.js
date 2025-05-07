@@ -77,8 +77,8 @@ function install(Vue) {
         });
       },
       getUserById: function (id) {
-        return self.$apiCall("GET", `/users/${id}`).then((resp) => {
-          if (resp.data && resp.data.id === id) {
+        return self.$apiCall("GET", "/users/" + id).then((resp) => {
+          if (resp.data && resp.data.id){
             return resp.data;
           }
           throw new Error(`User with ID ${id} not found.`);
