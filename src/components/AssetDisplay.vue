@@ -35,17 +35,20 @@
             </div>
           </div>
         </b-alert>
+        
         <b-alert
           show
-          variant="warning"
+          variant="danger"
           v-else-if="this.asset.status_label.status_meta == 'undeployable'"
         >
-          <b-icon-exclamation />This asset can not be deployed<br />
+          <b-icon-exclamation-circle-fill show variant="danger" style="width: 20px; height: 20px;" />    HOLD! This asset can not be deployed<br />
           State: {{ this.asset.status_label.name }}
         </b-alert>
-        <b-alert show variant="success" v-else>
-          <b-icon-check />This asset can be deployed
+
+        <b-alert show variant="danger" v-else>
+          <b-icon-exclamation-circle-fill show variant="danger" style="width: 20px; height: 20px;" />    HOLD! This asset is not checked-out to anyone.
         </b-alert>
+
         <Button
           variant="primary"
           shortcut="Enter"
@@ -123,7 +126,7 @@ export default {
     },
   }),
   mounted: function() {
-    this.getUserAvatar();
+    this.getUserAvatar(this.asset.assigned_to.id);
   },
   computed: {
     items: function () {
@@ -198,9 +201,10 @@ export default {
     getUserAvatar: function (user) {
       let id = null;
       if (user == null) {
-        id = this.$store.state.user.id;
+        id = null;
+        return;
       } else {
-        id = user.id;
+        id = user;
       }
       this.$apiCalls()
         .getUserById(id)
