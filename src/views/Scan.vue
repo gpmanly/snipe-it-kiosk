@@ -7,26 +7,43 @@
       This asset was not found.
     </b-alert>
     <div class="mt-5">
-      <Button variant="primary" href="/" shortcut="b">Back</Button>
+
     </div>
     <Scanner
       @scan="this.scan"
       @startScan="showAlert = false"
       @loading="(l) => (this.loading = l)"
     />
+    <b-alert variant="warning" show v-if="countdown > 0">
+                Logging out in {{ countdown }} seconds...
+    </b-alert>
   </b-container>
 </template>
 
 <script>
-import Button from "../components/Button.vue";
 import Scanner from "../components/Scanner.vue";
 export default {
-  components: { Button, Scanner },
+  components: {Scanner },
   name: "Scan",
   data: () => ({
     showAlert: false,
     loading: false,
+    timeoutId: null,
+    countdown: 300,
+    countdownInterval: null,
   }),
+  mounted: function() {
+    // Start countdown timer and update every second
+    this.countdownInterval = setInterval(() => {
+      if (this.countdown > 0) {
+        this.countdown--;
+      } else {
+        clearInterval(this.countdownInterval);
+        this.$router.push("/login"); // Reset checkState after countdown
+      }
+    }, 1000);
+    
+  },
   methods: {
     scan: function (resp) {
       if (resp == "ERROR") {

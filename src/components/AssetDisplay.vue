@@ -1,6 +1,7 @@
 <template>
   <div>
     <h2 class="text-left">{{ this.asset.manufacturer.name }} {{ this.asset.model.name }} {{ this.asset.name }}</h2>
+
     <b-row class="mt-4" v-if="this.checkState == 0">
       <b-col>
         <b-table :items="items">
@@ -14,6 +15,7 @@
         <img :src="this.asset.image" v-if="this.asset.image" style="max-width: 400px; height: auto;" />
       </b-col>
       <b-col>
+
         <b-alert
           show
           variant="info"
@@ -33,6 +35,7 @@
               This asset is deployed to:<br />
               {{ this.asset.assigned_to.name }} ({{ this.asset.assigned_to.type }})
             </div>
+            
           </div>
         </b-alert>
         
@@ -49,6 +52,10 @@
           <b-icon-exclamation-circle-fill show variant="danger" style="width: 20px; height: 20px;" />    HOLD! This asset is not checked-out to anyone.
         </b-alert>
 
+        <b-alert variant="warning" show v-if="countdown > 0">
+                Redirecting in {{ countdown }} seconds...
+        </b-alert>
+
         <KeyboardReader
           @read="(resp) => onKeyboardRead(resp)"
           @startReading="$emit('startScan')"
@@ -56,31 +63,28 @@
 
         <Button
           variant="primary"
-          shortcut="z"
           @click="() => checkout()"
           v-if="
             this.asset.custom_fields['Asset Status'].value == 'IN' &&
             this.asset.custom_fields['Asset Status'].value != 'HOLD'
           "
         >
-          Asset to OUT
+          <b-icon-upc-scan /> Scan Asset to OUT
         </Button>
 
         <Button
           variant="primary"
-          shortcut="z"
           @click="() => checkin()"
           v-if="
             this.asset.custom_fields['Asset Status'].value == 'OUT' &&
             this.asset.custom_fields['Asset Status'].value != 'HOLD'
           "
         >
-          Asset to IN
+        <b-icon-upc-scan /> Scan Asset to IN
         </Button>
 
         <Button
           variant="warning"
-          shortcut="x"
           @click="() => hold()"
           class="ml-2"
           v-if="
@@ -89,7 +93,7 @@
             this.asset.custom_fields['Asset Status'].value != 'HOLD'
           "
         >
-          HOLD the Asset
+        <b-icon-upc-scan /> Scan HOLD the Asset
         </Button>
         
       </b-col>
@@ -141,9 +145,25 @@ export default {
     user: {
       avatar: null,
     },
+    timeoutId: null,
+    countdown: 10,
+    countdownInterval: null,
   }),
   mounted: function() {
-    this.getUserAvatar(this.asset.assigned_to.id);
+    if (this.asset.status_label.status_meta == 'deployed'){
+      this.getUserAvatar(this.asset.assigned_to.id);
+    }
+
+    // Start countdown timer and update every second
+    this.countdownInterval = setInterval(() => {
+      if (this.countdown > 0) {
+        this.countdown--;
+      } else {
+        clearInterval(this.countdownInterval);
+        this.$router.push("/scan"); // Reset checkState after countdown
+      }
+    }, 1000);
+    
   },
   computed: {
     items: function () {
@@ -187,6 +207,7 @@ export default {
       }
     },
     checkout: function () {
+      clearInterval(this.countdownInterval);
       this.checkState = 1;
       this.$apiCalls()
         .updateAssetOutByTag(this.asset.asset_tag)
@@ -203,6 +224,7 @@ export default {
         });
     },
     checkin: function () {
+      clearInterval(this.countdownInterval);
       this.checkState = 1;
       this.$apiCalls()
         .updateAssetInByTag(this.asset.asset_tag)
@@ -220,6 +242,7 @@ export default {
         });
     },
     hold: function () {
+      clearInterval(this.countdownInterval);
       this.checkState = 1;
       this.$apiCalls()
         .updateAssetHoldByTag(this.asset.asset_tag)
