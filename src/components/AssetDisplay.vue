@@ -64,43 +64,40 @@
           @startReading="$emit('startScan')"
         />
         <div>
-        <Button
+          <Button
           variant="primary"
+          shortcut="Enter"
           @click="() => checkout()"
-          class="ml-2"
           v-if="
-            this.asset.custom_fields['Asset Status'].value == 'IN' &&
-            this.asset.custom_fields['Asset Status'].value != 'HOLD'
+            this.asset.status_label.status_meta != 'undeployable' &&
+            this.asset.status_label.status_meta != 'deployed'
           "
         >
-          <b-icon-upc-scan /> Scan Asset to OUT
+          Check-out to me
         </Button>
 
         <Button
           variant="primary"
+          shortcut="Enter"
           @click="() => checkin()"
-          class="ml-2"
           v-if="
-            this.asset.custom_fields['Asset Status'].value == 'OUT' &&
-            this.asset.custom_fields['Asset Status'].value != 'HOLD'
+            this.asset.status_label.status_meta != 'undeployable' &&
+            this.asset.status_label.status_meta == 'deployed'
           "
         >
-        <b-icon-upc-scan /> Scan Asset to IN
+          Check-in
         </Button>
 
         <Button
-          variant="warning"
-          @click="() => hold()"
+          variant="primary"
+          @click="$router.back()"
+          shortcut="b"
           class="ml-2"
-          v-if="
-            this.asset.custom_fields['Asset Status'].value == 'OUT' ||
-            this.asset.custom_fields['Asset Status'].value == 'IN' &&
-            this.asset.custom_fields['Asset Status'].value != 'HOLD'
-          "
         >
-        <b-icon-upc-scan /> Scan HOLD the Asset
+          Back
         </Button>
       </div>
+      <UserSelector class="mt-2" @user="(id) => checkout(id)" />
       </b-col>
 
     </b-row>
@@ -109,12 +106,12 @@
         <b-spinner class="spinner-big mt-4 mb-4" v-if="this.checkState == 1" />
         <div v-if="this.checkState == 2">
           <b-icon-check variant="success" class="icon-big mt-4 mb-4" />
-          <h5>Asset is OUT</h5>
+          <h5>Checked out to {{ this.selectedUser.name }}</h5>
         </div>
         <div v-if="this.checkState == 3">
           <b-icon-check variant="success" class="icon-big mt-4 mb-4" />
           <h5>
-            Asset is IN
+            Checked in
             <span v-if="this.locationOnCheckin">
               , please put it to location: {{ this.locationOnCheckin }}
             </span>
@@ -126,10 +123,6 @@
             class="icon-big mt-4 mb-4"
           />
           <h5>Please put the item back!</h5>
-        </div>
-        <div v-if="this.checkState == 5">
-          <b-icon-exclamation-triangle variant="warning" class="icon-big mt-4 mb-4" />
-          <h5>Asset is on-HOLD</h5>
         </div>
       </b-col>
     </b-row>
@@ -211,16 +204,23 @@ export default {
         console.warn("Unrecognized keyboard input:", val);
       }
     },
-    checkout: function () {
-      clearInterval(this.countdownInterval);
+    checkout: function (user) {
+      let id = null;
+      if (user == null) {
+        id = this.$store.state.user.id;
+        this.selectedUser = this.$store.state.user;
+      } else {
+        id = user.id;
+        this.selectedUser = user;
+      }
       this.checkState = 1;
       this.$apiCalls()
-        .updateAssetOutByTag(this.asset.asset_tag)
+        .checkoutAssetByTag(this.asset.asset_tag, id)
         .then(() => {
           this.checkState = 2;
           setTimeout(() => {
             this.$router.push("/scan");
-          }, 2000);
+          }, 1000);
 
           return;
         })
@@ -229,16 +229,15 @@ export default {
         });
     },
     checkin: function () {
-      clearInterval(this.countdownInterval);
       this.checkState = 1;
       this.$apiCalls()
-        .updateAssetInByTag(this.asset.asset_tag)
+        .checkinAssetByTag(this.asset.asset_tag)
         .then((resp) => {
           this.locationOnCheckin = resp.location ? resp.location.name : null;
           this.checkState = 3;
           setTimeout(() => {
             this.$router.push("/scan");
-          }, 2000);
+          }, 1000);
           return;
         })
         .catch((e) => {
