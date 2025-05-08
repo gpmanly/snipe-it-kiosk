@@ -12,17 +12,31 @@ export default {
       type: Number,
       default: 5000,
     },
+  data() {
+    return {
+      countdown: Math.floor(this.timeout / 1000),
+      interval: null,
+      timer: null,
+    }
+  }
   },
   methods: {
     read: function () {
-      this.setTimer();
+      this.resetTimers();
     },
-    setTimer: function () {
-      if (this.timeoutInstance) {
-        clearTimeout(this.timeoutInstance);
-        this.timeoutInstance = null;
-      }
-      this.timeoutInstance = setTimeout(this.logout, this.timeout);
+    resetTimers() {
+      clearTimeout(this.timer);
+      clearInterval(this.interval);
+
+      this.countdown = Math.floor(this.timeout / 1000);
+      this.$emit("timeout-update", this.countdown);
+
+      this.interval = setInterval(() => {
+        this.countdown--;
+        this.$emit("timeout-update", this.countdown);
+      }, 1000);
+
+      this.timer = setTimeout(this.logout, this.timeout);
     },
     logout: function () {
       this.timeoutInstance = null;
@@ -31,7 +45,7 @@ export default {
     },
   },
   mounted: function () {
-    this.setTimer();
+    this.resetTimers();
   },
   beforeDestroy: function () {
     if (this.timeoutInstance) {

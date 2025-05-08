@@ -14,36 +14,31 @@
       @startScan="showAlert = false"
       @loading="(l) => (this.loading = l)"
     />
-    <b-alert variant="warning" show v-if="countdown > 0">
-                Logging out in {{ countdown }} seconds...
+    <TimeoutHandler 
+      :timeout="this.$store.state.config.logoutTimeout || 5000" 
+      @timeout-update="(val) => timeout = val"
+    />
+    <b-alert variant="warning" show v-if="timeout > 0"
+      class="d-inline-block px-3 py-2"
+      style="width: auto; white-space: nowrap;"
+      >
+                Logging out in {{ timeout }} seconds...
     </b-alert>
   </b-container>
 </template>
 
 <script>
 import Scanner from "../components/Scanner.vue";
+import TimeoutHandler from "../components/TimeoutHandler.vue";
+
 export default {
-  components: {Scanner },
+  components: {Scanner, TimeoutHandler },
   name: "Scan",
   data: () => ({
     showAlert: false,
     loading: false,
-    timeoutId: null,
-    countdown: 300,
-    countdownInterval: null,
+    timeout: 0,
   }),
-  mounted: function() {
-    // Start countdown timer and update every second
-    this.countdownInterval = setInterval(() => {
-      if (this.countdown > 0) {
-        this.countdown--;
-      } else {
-        clearInterval(this.countdownInterval);
-        this.$router.push("/login"); // Reset checkState after countdown
-      }
-    }, 1000);
-    
-  },
   methods: {
     scan: function (resp) {
       if (resp == "ERROR") {

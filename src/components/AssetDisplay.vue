@@ -52,7 +52,10 @@
           <b-icon-exclamation-circle-fill show variant="danger" style="width: 20px; height: 20px;" />    HOLD! This asset is not checked-out to anyone.
         </b-alert>
 
-        <b-alert variant="warning" show v-if="countdown > 0">
+        <b-alert variant="warning" show v-if="countdown > 0"
+          class="d-inline-block px-3 py-2"
+          style="width: auto; white-space: nowrap;"
+          >
                 Redirecting in {{ countdown }} seconds...
         </b-alert>
 
@@ -60,10 +63,11 @@
           @read="(resp) => onKeyboardRead(resp)"
           @startReading="$emit('startScan')"
         />
-
+        <div>
         <Button
           variant="primary"
           @click="() => checkout()"
+          class="ml-2"
           v-if="
             this.asset.custom_fields['Asset Status'].value == 'IN' &&
             this.asset.custom_fields['Asset Status'].value != 'HOLD'
@@ -75,6 +79,7 @@
         <Button
           variant="primary"
           @click="() => checkin()"
+          class="ml-2"
           v-if="
             this.asset.custom_fields['Asset Status'].value == 'OUT' &&
             this.asset.custom_fields['Asset Status'].value != 'HOLD'
@@ -95,7 +100,7 @@
         >
         <b-icon-upc-scan /> Scan HOLD the Asset
         </Button>
-        
+      </div>
       </b-col>
 
     </b-row>
