@@ -56,6 +56,42 @@ function install(Vue) {
             throw new Error(resp);
           });
       },
+      updateAssetInByTag: function (tag) {
+        return self
+          .$apiCall("PATCH", "/hardware/" + tag, {
+            _snipeit_asset_status_2: "IN",
+          })
+          .then((resp) => {
+            if (resp.data.status == "success") {
+              return this.getAssetByTag(tag);
+            }
+            throw new Error(resp);
+          });
+      },
+      updateAssetOutByTag: function (tag) {
+        return self
+          .$apiCall("PATCH", "/hardware/" + tag, {
+            _snipeit_asset_status_2: "OUT",
+          })
+          .then((resp) => {
+            if (resp.data.status == "success") {
+              return this.getAssetByTag(tag);
+            }
+            throw new Error(resp);
+          });
+      },
+      updateAssetHoldByTag: function (tag) {
+        return self
+          .$apiCall("PATCH", "/hardware/" + tag, {
+            _snipeit_asset_status_2: "HOLD",
+          })
+          .then((resp) => {
+            if (resp.data.status == "success") {
+              return this.getAssetByTag(tag);
+            }
+            throw new Error(resp);
+          });
+      },
       auditAssetByTag: function (tag) {
         return self
           .$apiCall("POST", "/hardware/audit", {

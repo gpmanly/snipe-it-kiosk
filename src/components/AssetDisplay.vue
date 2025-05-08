@@ -49,50 +49,63 @@
           <b-icon-exclamation-circle-fill show variant="danger" style="width: 20px; height: 20px;" />    HOLD! This asset is not checked-out to anyone.
         </b-alert>
 
+        <KeyboardReader
+          @read="(resp) => onKeyboardRead(resp)"
+          @startReading="$emit('startScan')"
+        />
+
         <Button
           variant="primary"
-          shortcut="Enter"
+          shortcut="z"
           @click="() => checkout()"
           v-if="
-            this.asset.status_label.status_meta != 'undeployable' &&
-            this.asset.status_label.status_meta != 'deployed'
+            this.asset.custom_fields['Asset Status'].value == 'IN' &&
+            this.asset.custom_fields['Asset Status'].value != 'HOLD'
           "
         >
-          Check-out to me
+          Asset to OUT
         </Button>
+
         <Button
           variant="primary"
-          shortcut="Enter"
+          shortcut="z"
           @click="() => checkin()"
           v-if="
-            this.asset.status_label.status_meta != 'undeployable' &&
-            this.asset.status_label.status_meta == 'deployed'
+            this.asset.custom_fields['Asset Status'].value == 'OUT' &&
+            this.asset.custom_fields['Asset Status'].value != 'HOLD'
           "
         >
-          Check-in
+          Asset to IN
         </Button>
+
         <Button
-          variant="primary"
-          @click="$router.back()"
-          shortcut="b"
+          variant="warning"
+          shortcut="x"
+          @click="() => hold()"
           class="ml-2"
+          v-if="
+            this.asset.custom_fields['Asset Status'].value == 'OUT' ||
+            this.asset.custom_fields['Asset Status'].value == 'IN' &&
+            this.asset.custom_fields['Asset Status'].value != 'HOLD'
+          "
         >
-          Back
+          HOLD the Asset
         </Button>
-        <UserSelector class="mt-2" @user="(id) => checkout(id)" />
+        
       </b-col>
+
     </b-row>
     <b-row v-if="this.checkState != 0">
       <b-col>
         <b-spinner class="spinner-big mt-4 mb-4" v-if="this.checkState == 1" />
         <div v-if="this.checkState == 2">
           <b-icon-check variant="success" class="icon-big mt-4 mb-4" />
-          <h5>Checked out to {{ this.selectedUser.name }}</h5>
+          <h5>Asset is OUT</h5>
         </div>
         <div v-if="this.checkState == 3">
           <b-icon-check variant="success" class="icon-big mt-4 mb-4" />
           <h5>
-            Checked in
+            Asset is IN
             <span v-if="this.locationOnCheckin">
               , please put it to location: {{ this.locationOnCheckin }}
             </span>
@@ -105,6 +118,10 @@
           />
           <h5>Please put the item back!</h5>
         </div>
+        <div v-if="this.checkState == 5">
+          <b-icon-exclamation-triangle variant="warning" class="icon-big mt-4 mb-4" />
+          <h5>Asset is on-HOLD</h5>
+        </div>
       </b-col>
     </b-row>
   </div>
@@ -112,13 +129,13 @@
 
 <script>
 import Button from "./Button.vue";
-import UserSelector from "./UserSelector.vue";
+import KeyboardReader from "@/components/KeyboardReader.vue";
 
 export default {
-  components: { Button, UserSelector },
+  components: {Button, KeyboardReader},
   name: "AssetDisplay",
   data: () => ({
-    checkState: 0, // 0: init, 1: loading, 2: success checkout, 3: success checkin, 4: error;
+    checkState: 0, // 0: init, 1: loading, 2: success checkout, 3: success checkin, 4: error, 5: warning hold;
     locationOnCheckin: null,
     selectedUser: null,
     user: {
@@ -157,23 +174,27 @@ export default {
     }
   },
   methods: {
-    checkout: function (user) {
-      let id = null;
-      if (user == null) {
-        id = this.$store.state.user.id;
-        this.selectedUser = this.$store.state.user;
+    onKeyboardRead: function (input) {
+      const val = input;
+      if (val === 'out') {
+        this.checkout();
+      } else if (val === 'in') {
+        this.checkin();
+      } else if (val === 'hold') {
+        this.hold();
       } else {
-        id = user.id;
-        this.selectedUser = user;
+        console.warn("Unrecognized keyboard input:", val);
       }
+    },
+    checkout: function () {
       this.checkState = 1;
       this.$apiCalls()
-        .checkoutAssetByTag(this.asset.asset_tag, id)
+        .updateAssetOutByTag(this.asset.asset_tag)
         .then(() => {
           this.checkState = 2;
           setTimeout(() => {
             this.$router.push("/scan");
-          }, 1000);
+          }, 2000);
 
           return;
         })
@@ -184,17 +205,33 @@ export default {
     checkin: function () {
       this.checkState = 1;
       this.$apiCalls()
-        .checkinAssetByTag(this.asset.asset_tag)
+        .updateAssetInByTag(this.asset.asset_tag)
         .then((resp) => {
           this.locationOnCheckin = resp.location ? resp.location.name : null;
           this.checkState = 3;
           setTimeout(() => {
             this.$router.push("/scan");
-          }, 1000);
+          }, 2000);
           return;
         })
         .catch((e) => {
           console.error(e);
+          this.checkState = 4;
+        });
+    },
+    hold: function () {
+      this.checkState = 1;
+      this.$apiCalls()
+        .updateAssetHoldByTag(this.asset.asset_tag)
+        .then(() => {
+          this.checkState = 5;
+          setTimeout(() => {
+            this.$router.push("/scan");
+          }, 2000);
+
+          return;
+        })
+        .catch(() => {
           this.checkState = 4;
         });
     },
