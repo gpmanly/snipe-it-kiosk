@@ -15,7 +15,7 @@
       @loading="(l) => (this.loading = l)"
     />
     <TimeoutHandler 
-      :timeout="this.$store.state.config.logoutTimeout || 5000" 
+      :timeout="this.$store.state.config.logoutTimeout || 900000" 
       @timeout-update="(val) => timeout = val"
     />
     <b-alert variant="warning" show v-if="timeout > 0"
