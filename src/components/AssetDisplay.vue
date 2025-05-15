@@ -73,7 +73,7 @@
             this.asset.custom_fields['Asset Status'].value != 'HOLD'
           "
         >
-          <b-icon-upc-scan /> Scan Asset to OUT
+          <b-icon-upc-scan /> Scan IN/OUT
         </Button>
 
         <Button
@@ -85,7 +85,7 @@
             this.asset.custom_fields['Asset Status'].value != 'HOLD'
           "
         >
-        <b-icon-upc-scan /> Scan Asset to IN
+        <b-icon-upc-scan /> Scan IN/OUT
         </Button>
 
         <Button
@@ -98,7 +98,7 @@
             this.asset.custom_fields['Asset Status'].value != 'HOLD'
           "
         >
-        <b-icon-upc-scan /> Scan HOLD the Asset
+        <b-icon-upc-scan /> Scan HOLD
         </Button>
       </div>
       </b-col>
