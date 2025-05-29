@@ -22,6 +22,7 @@ function install(Vue) {
     let self = this;
     return {
       getAssetByTag: function (tag) {
+        tag = encodeURIComponent(tag);
         return self.$apiCall("GET", "/hardware/bytag/" + tag).then((resp) => {
           resp.data.status_label.__deployable = true;
           if (
@@ -34,6 +35,7 @@ function install(Vue) {
         });
       },
       checkoutAssetByTag: function (tag, userId) {
+        tag = encodeURIComponent(tag);
         return self
           .$apiCall("POST", "/hardware/" + tag + "/checkout", {
             checkout_to_type: "user",
@@ -47,6 +49,7 @@ function install(Vue) {
           });
       },
       checkinAssetByTag: function (tag) {
+        tag = encodeURIComponent(tag);
         return self
           .$apiCall("POST", "/hardware/" + tag + "/checkin")
           .then((resp) => {
@@ -57,6 +60,7 @@ function install(Vue) {
           });
       },
       updateAssetInByTag: function (tag) {
+        tag = encodeURIComponent(tag);
         return self
           .$apiCall("PATCH", "/hardware/" + tag, {
             _snipeit_asset_status_2: "IN",
@@ -69,6 +73,7 @@ function install(Vue) {
           });
       },
       updateAssetOutByTag: function (tag) {
+        tag = encodeURIComponent(tag);
         return self
           .$apiCall("PATCH", "/hardware/" + tag, {
             _snipeit_asset_status_2: "OUT",
@@ -81,6 +86,7 @@ function install(Vue) {
           });
       },
       updateAssetHoldByTag: function (tag) {
+        tag = encodeURIComponent(tag);
         return self
           .$apiCall("PATCH", "/hardware/" + tag, {
             _snipeit_asset_status_2: "HOLD",
@@ -93,6 +99,7 @@ function install(Vue) {
           });
       },
       auditAssetByTag: function (tag) {
+        tag = encodeURIComponent(tag);
         return self
           .$apiCall("POST", "/hardware/audit", {
             asset_tag: tag,
