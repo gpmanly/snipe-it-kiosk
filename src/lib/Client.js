@@ -34,29 +34,6 @@ function install(Vue) {
           return resp.data;
         });
       },
-      checkoutAssetByTag: function (tag, userId) {
-        return self
-          .$apiCall("POST", "/hardware/" + tag + "/checkout", {
-            checkout_to_type: "user",
-            assigned_user: userId,
-          })
-          .then((resp) => {
-            if (resp.data.status == "success") {
-              return true;
-            }
-            throw new Error(resp);
-          });
-      },
-      checkinAssetByTag: function (tag) {
-        return self
-          .$apiCall("POST", "/hardware/" + tag + "/checkin")
-          .then((resp) => {
-            if (resp.data.status == "success") {
-              return this.getAssetByTag(tag);
-            }
-            throw new Error(resp);
-          });
-      },
       updateAssetInByTag: function (tag) {
         return self
           .$apiCall("PATCH", "/hardware/" + tag, {

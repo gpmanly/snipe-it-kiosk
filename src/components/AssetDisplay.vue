@@ -66,7 +66,7 @@
         <div>
         <Button
           variant="primary"
-          @click="() => checkout()"
+          @click="() => assetOUT()"
           class="ml-2"
           v-if="
             this.asset.custom_fields['Asset Status'].value == 'IN' &&
@@ -78,7 +78,7 @@
 
         <Button
           variant="primary"
-          @click="() => checkin()"
+          @click="() => assetIN()"
           class="ml-2"
           v-if="
             this.asset.custom_fields['Asset Status'].value == 'OUT' &&
@@ -144,7 +144,7 @@ export default {
   components: {Button, KeyboardReader},
   name: "AssetDisplay",
   data: () => ({
-    checkState: 0, // 0: init, 1: loading, 2: success checkout, 3: success checkin, 4: error, 5: warning hold;
+    checkState: 0, // 0: init, 1: loading, 2: success assetOUT, 3: success assetIN, 4: error, 5: warning hold;
     locationOnCheckin: null,
     selectedUser: null,
     user: {
@@ -202,16 +202,16 @@ export default {
     onKeyboardRead: function (input) {
       const val = input;
       if (val === 'out') {
-        this.checkout();
+        this.assetOUT();
       } else if (val === 'in') {
-        this.checkin();
+        this.assetIN();
       } else if (val === 'hold') {
         this.hold();
       } else {
         console.warn("Unrecognized keyboard input:", val);
       }
     },
-    checkout: function () {
+    assetOUT: function () {
       clearInterval(this.countdownInterval);
       this.checkState = 1;
       this.$apiCalls()
@@ -228,7 +228,7 @@ export default {
           this.checkState = 4;
         });
     },
-    checkin: function () {
+    assetIN: function () {
       clearInterval(this.countdownInterval);
       this.checkState = 1;
       this.$apiCalls()
