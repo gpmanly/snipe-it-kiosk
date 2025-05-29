@@ -215,7 +215,7 @@ export default {
       clearInterval(this.countdownInterval);
       this.checkState = 1;
       this.$apiCalls()
-        .updateAssetOutByTag(this.asset.asset_tag)
+        .updateAssetOutByTag(this.asset.id)
         .then(() => {
           this.checkState = 2;
           setTimeout(() => {
@@ -232,9 +232,8 @@ export default {
       clearInterval(this.countdownInterval);
       this.checkState = 1;
       this.$apiCalls()
-        .updateAssetInByTag(this.asset.asset_tag)
-        .then((resp) => {
-          this.locationOnCheckin = resp.location ? resp.location.name : null;
+        .updateAssetInByTag(this.asset.id)
+        .then(() => {
           this.checkState = 3;
           setTimeout(() => {
             this.$router.push("/scan");
@@ -250,7 +249,7 @@ export default {
       clearInterval(this.countdownInterval);
       this.checkState = 1;
       this.$apiCalls()
-        .updateAssetHoldByTag(this.asset.asset_tag)
+        .updateAssetHoldByTag(this.asset.id)
         .then(() => {
           this.checkState = 5;
           setTimeout(() => {
