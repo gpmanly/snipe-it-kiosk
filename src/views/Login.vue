@@ -1,6 +1,6 @@
 <template>
   <b-container class="text-center mt-5">
-    <h1>Please Scan your Employee ID</h1>
+    <h1>Please Scan your Kiosk Access Card</h1>
     <b-icon-person-badge class="login-icon mt-4 mb-4" v-if="!this.loading" />
     <b-spinner class="spinner-big mt-4 mb-4" v-else />
     <b-alert :show="this.showAlert" variant="danger" fade>
