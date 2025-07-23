@@ -94,12 +94,12 @@
         <b-spinner class="spinner-big mt-4 mb-4" v-if="this.checkState == 1" />
         <div v-if="this.checkState == 2">
           <b-icon-check variant="success" class="icon-big mt-4 mb-4" />
-          <h5>Asset is OUT</h5>
+          <h5>Checked out to {{ this.selectedUser.name }}</h5>
         </div>
         <div v-if="this.checkState == 3">
           <b-icon-check variant="success" class="icon-big mt-4 mb-4" />
           <h5>
-            Asset is IN
+            Checked in
             <span v-if="this.locationOnCheckin">
               , please put it to location: {{ this.locationOnCheckin }}
             </span>
@@ -108,10 +108,6 @@
         <div v-if="this.checkState == 4">
           <b-icon-exclamation-octagon variant="danger" class="icon-big mt-4 mb-4" />
           <h5>Please put the item back!</h5>
-        </div>
-        <div v-if="this.checkState == 5">
-          <b-icon-exclamation-triangle variant="warning" class="icon-big mt-4 mb-4" />
-          <h5>Asset is on-HOLD</h5>
         </div>
       </b-col>
     </b-row>
@@ -206,7 +202,7 @@ export default {
           this.checkState = 2;
           setTimeout(() => {
             this.$router.push("/scan");
-          }, 2000);
+          }, 1000);
 
           return;
         })
@@ -223,7 +219,7 @@ export default {
           this.checkState = 3;
           setTimeout(() => {
             this.$router.push("/scan");
-          }, 2000);
+          }, 1000);
           return;
         })
         .catch((e) => {
