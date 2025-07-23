@@ -94,20 +94,25 @@
         <b-spinner class="spinner-big mt-4 mb-4" v-if="this.checkState == 1" />
         <div v-if="this.checkState == 2">
           <b-icon-check variant="success" class="icon-big mt-4 mb-4" />
-          <h5>Checked out to {{ this.selectedUser.name }}</h5>
+          <h5>
+            Asset is now OUT
+          </h5>
         </div>
         <div v-if="this.checkState == 3">
           <b-icon-check variant="success" class="icon-big mt-4 mb-4" />
           <h5>
-            Checked in
-            <span v-if="this.locationOnCheckin">
-              , please put it to location: {{ this.locationOnCheckin }}
-            </span>
+            Asset is now IN
           </h5>
         </div>
         <div v-if="this.checkState == 4">
           <b-icon-exclamation-octagon variant="danger" class="icon-big mt-4 mb-4" />
           <h5>Please put the item back!</h5>
+        </div>
+        <div v-if="this.checkState == 5">
+          <b-icon-check variant="warning" class="icon-big mt-4 mb-4" />
+          <h5>
+            Asset is put on HOLD
+          </h5>
         </div>
       </b-col>
     </b-row>
