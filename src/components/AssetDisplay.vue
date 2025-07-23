@@ -93,7 +93,7 @@
       <b-col>
         <b-spinner class="spinner-big mt-4 mb-4" v-if="this.checkState == 1" />
         <div v-if="this.checkState == 2">
-          <b-icon-check variant="success" class="icon-big mt-4 mb-4" />
+          <b-icon-check variant="primary" class="icon-big mt-4 mb-4" />
           <h5>
             Asset is now OUT
           </h5>
@@ -109,7 +109,7 @@
           <h5>Please put the item back!</h5>
         </div>
         <div v-if="this.checkState == 5">
-          <b-icon-check variant="warning" class="icon-big mt-4 mb-4" />
+          <b-icon-exclamation-triangle variant="warning" class="icon-big mt-4 mb-4" />
           <h5>
             Asset is put on HOLD
           </h5>
