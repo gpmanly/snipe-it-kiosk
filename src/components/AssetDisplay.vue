@@ -38,23 +38,23 @@
             <!-- Assigned User Info -->
             <div class="ml-2">
               This asset is deployed to:<br />
-              {{ this.asset.assigned_to.name }} ({{ this.asset.assigned_to.type }})
+              <b-badge variant="success" class="badge-big">{{ this.asset.assigned_to.name }}</b-badge>
             </div>
 
           </div>
         </b-alert>
 
         <b-alert show variant="danger" v-else-if="this.asset.status_label.status_meta == 'undeployable'">
-          <b-icon-exclamation-circle-fill show variant="danger" style="width: 20px; height: 20px;" /> HOLD! This asset
+          <b-badge variant="danger" class="badge-big"><b-icon-exclamation-circle-fill show variant="danger" style="width: 20px; height: 20px;" /> HOLD! This asset
           can not
           be deployed<br />
-          State: {{ this.asset.status_label.name }}
+          State: {{ this.asset.status_label.name }}</b-badge>
         </b-alert>
 
         <b-alert show variant="danger" v-else>
-          <b-icon-exclamation-circle-fill show variant="danger" style="width: 20px; height: 20px;" /> HOLD! This asset
+          <b-badge variant="danger" class="badge-big"><b-icon-exclamation-circle-fill show variant="danger" style="width: 20px; height: 20px;" /> HOLD! This asset
           is not
-          checked-out to anyone.
+          checked-out to anyone.</b-badge>
         </b-alert>
 
         <b-alert variant="warning" show v-if="countdown > 0" class="d-inline-block px-3 py-2"
@@ -165,7 +165,7 @@ export default {
           value: this.asset.rtd_location ? this.asset.rtd_location.name : "-",
         },
       ];
-      Object.keys(this.asset.custom_fields).forEach((i) => {
+      Object.keys(this.asset.custom_fields).slice(0,1).forEach((i) => {
         a.push({
           icon: "",
           name: i,
