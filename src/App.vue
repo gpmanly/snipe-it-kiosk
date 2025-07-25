@@ -53,6 +53,12 @@ export default {
 </script>
 
 <style lang="scss">
+
+/* Layout spacing fix for fixed navbar */
+.app-wrapper {
+  padding-top: 20px; /* match the height of the fixed navbar */
+}
+
 .spinner-text {
   width: 17px !important;
   height: 17px !important;
