@@ -13,16 +13,16 @@
           </template>
           <template #cell(name)="datum">
             <span v-if="datum.item.name === 'Asset Status'">
-                <b-badge variant="info" class="badge-big">{{ datum.item.name }}</b-badge> </span>
+              <b-badge variant="info" class="badge-big">{{ datum.item.name }}</b-badge> </span>
             <span v-else>{{ datum.item.name }}</span>
           </template>
           <template #cell(value)="data">
-              <span v-if="data.item.value === 'IN'">
-                <b-badge variant="success" class="badge-big">{{ data.item.value }}</b-badge> </span>
-              <span v-else-if="data.item.value === 'OUT'">
-                <b-badge variant="primary" class="badge-big">{{ data.item.value }}</b-badge> </span>
-              <span v-else-if="data.item.value === 'HOLD'">
-                <b-badge variant="warning" class="badge-big">{{ data.item.value }}</b-badge> </span>
+            <span v-if="data.item.value === 'IN'">
+              <b-badge variant="success" class="badge-big">{{ data.item.value }}</b-badge> </span>
+            <span v-else-if="data.item.value === 'OUT'">
+              <b-badge variant="primary" class="badge-big">{{ data.item.value }}</b-badge> </span>
+            <span v-else-if="data.item.value === 'HOLD'">
+              <b-badge variant="warning" class="badge-big">{{ data.item.value }}</b-badge> </span>
             <span v-else>{{ data.item.value }}</span>
           </template>
         </b-table>
@@ -45,21 +45,16 @@
         </b-alert>
 
         <b-alert show variant="danger" v-else-if="this.asset.status_label.status_meta == 'undeployable'">
-          <b-badge variant="danger" class="badge-big"><b-icon-exclamation-circle-fill show variant="danger" style="width: 20px; height: 20px;" /> HOLD! This asset
-          can not
-          be deployed<br />
-          State: {{ this.asset.status_label.name }}</b-badge>
+          <b-badge variant="danger" class="badge-big">HOLD! This asset
+            can not
+            be deployed<br />
+            State: {{ this.asset.status_label.name }}</b-badge>
         </b-alert>
 
         <b-alert show variant="danger" v-else>
-          <b-badge variant="danger" class="badge-big"><b-icon-exclamation-circle-fill show variant="danger" style="width: 20px; height: 20px;" /> HOLD! This asset
-          is not
-          checked-out to anyone.</b-badge>
-        </b-alert>
-
-        <b-alert variant="warning" show v-if="countdown > 0" class="d-inline-block px-3 py-2"
-          style="width: auto; white-space: nowrap;">
-          Redirecting in {{ countdown }} seconds...
+          <b-badge variant="danger" class="badge-big">HOLD! This asset
+            is not
+            checked-out to anyone.</b-badge>
         </b-alert>
 
         <KeyboardReader @read="(resp) => onKeyboardRead(resp)" @startReading="$emit('startScan')" />
@@ -86,6 +81,14 @@
             <b-icon-upc-scan /> Scan HOLD
           </Button>
         </div>
+        
+        <div>
+          <b-alert variant="warning" show v-if="countdown > 0" class="d-inline-block px-3 py-2"
+            style="width: auto; white-space: nowrap;">
+            Redirecting in {{ countdown }} seconds...
+          </b-alert>
+        </div>
+        
       </b-col>
 
     </b-row>
@@ -165,7 +168,7 @@ export default {
           value: this.asset.rtd_location ? this.asset.rtd_location.name : "-",
         },
       ];
-      Object.keys(this.asset.custom_fields).slice(0,1).forEach((i) => {
+      Object.keys(this.asset.custom_fields).slice(0, 1).forEach((i) => {
         a.push({
           icon: "",
           name: i,
