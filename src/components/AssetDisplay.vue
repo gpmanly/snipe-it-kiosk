@@ -26,7 +26,7 @@
             <span v-else>{{ data.item.value }}</span>
           </template>
         </b-table>
-        <img :src="this.asset.image" v-if="this.asset.image" style="max-width: 400px; height: auto;" />
+        <img :src="this.asset.image" v-if="this.asset.image" style="width: auto; max-height: 200px;" />
       </b-col>
       <b-col>
 
@@ -57,23 +57,30 @@
             checked-out to anyone.</b-badge>
         </b-alert>
 
+        <!-- Button Group with Bottom Margin -->
         <KeyboardReader @read="(resp) => onKeyboardRead(resp)" @startReading="$emit('startScan')" />
-        <div>
-          <Button variant="primary" @click="() => assetOUT()" class="ml-2" v-if="
+        <div class="mb-3">
+          <Button variant="primary" @click="() => assetOUT()" class="badge-big ml-2" v-if="
             this.asset.custom_fields['Asset Status'].value == 'IN' &&
-            this.asset.custom_fields['Asset Status'].value != 'HOLD'
+            this.asset.status_label.status_meta == 'deployed'
           ">
-            <b-icon-upc-scan /> Scan IN/OUT
+            <b-icon-upc-scan /> Scan OUT
           </Button>
 
-          <Button variant="primary" @click="() => assetIN()" class="ml-2" v-if="
+          <Button variant="success" @click="() => assetIN()" class="badge-big ml-2" v-else-if="
             this.asset.custom_fields['Asset Status'].value == 'OUT' &&
-            this.asset.custom_fields['Asset Status'].value != 'HOLD'
+            this.asset.status_label.status_meta == 'deployed'
           ">
-            <b-icon-upc-scan /> Scan IN/OUT
+            <b-icon-upc-scan /> Scan IN
           </Button>
 
-          <Button variant="warning" @click="() => hold()" class="ml-2" v-if="
+          <Button variant="primary" @click="() => assetIN()" class="badge-big ml-2" v-else-if="
+            this.asset.custom_fields['Asset Status'].value == 'HOLD'
+          ">
+            <b-icon-upc-scan /> Scan IN / OUT
+          </Button>
+
+          <Button variant="warning" @click="() => hold()" class="badge-big ml-2" v-if="
             this.asset.custom_fields['Asset Status'].value == 'OUT' ||
             this.asset.custom_fields['Asset Status'].value == 'IN' &&
             this.asset.custom_fields['Asset Status'].value != 'HOLD'
@@ -81,17 +88,18 @@
             <b-icon-upc-scan /> Scan HOLD
           </Button>
         </div>
-        
+
+        <!-- Countdown Alert -->
         <div>
           <b-alert variant="warning" show v-if="countdown > 0" class="d-inline-block px-3 py-2"
             style="width: auto; white-space: nowrap;">
             Redirecting in {{ countdown }} seconds...
           </b-alert>
         </div>
-        
-      </b-col>
 
+      </b-col>
     </b-row>
+
     <b-row v-if="this.checkState != 0">
       <b-col>
         <b-spinner class="spinner-big mt-4 mb-4" v-if="this.checkState == 1" />
@@ -119,6 +127,7 @@
         </div>
       </b-col>
     </b-row>
+
   </div>
 </template>
 
@@ -191,13 +200,20 @@ export default {
     },
     onKeyboardRead: function (input) {
       const val = input;
-      if (val === 'out') {
+      if (val === 'out') 
+      {
         this.assetOUT();
-      } else if (val === 'in') {
+      } 
+      else if (val === 'in') 
+      {
         this.assetIN();
-      } else if (val === 'hold') {
+      } 
+      else if (val === 'hold') 
+      {
         this.hold();
-      } else {
+      } 
+      else 
+      {
         console.warn("Unrecognized keyboard input:", val);
       }
     },
@@ -210,7 +226,7 @@ export default {
           this.checkState = 2;
           setTimeout(() => {
             this.$router.push("/scan");
-          }, 1000);
+          }, 2000);
 
           return;
         })
@@ -227,7 +243,7 @@ export default {
           this.checkState = 3;
           setTimeout(() => {
             this.$router.push("/scan");
-          }, 1000);
+          }, 2000);
           return;
         })
         .catch((e) => {
