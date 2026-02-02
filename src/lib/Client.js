@@ -46,12 +46,45 @@ function install(Vue) {
             throw new Error(resp);
           });
       },
+      checkoutAssetByID: function (id, userId) {
+        return self
+          .$apiCall("POST", "/hardware/" + id + "/checkout", {
+            checkout_to_type: "user",
+            assigned_user: userId,
+          })
+          .then((resp) => {
+            if (resp.data.status == "success") {
+              return true;
+            }
+            throw new Error(resp);
+          });
+      },
+      checkinAssetByID: function (id) {
+        return self
+          .$apiCall("POST", "/hardware/" + id + "/checkin")
+          .then((resp) => {
+            if (resp.data.status == "success") {
+              return this.getAssetByTag(resp.data.payload.asset_tag);
+            }
+            throw new Error(resp);
+          });
+      },
       checkinAssetByTag: function (tag) {
         return self
           .$apiCall("POST", "/hardware/" + tag + "/checkin")
           .then((resp) => {
             if (resp.data.status == "success") {
               return this.getAssetByTag(tag);
+            }
+            throw new Error(resp);
+          });
+      },
+      auditAssetByID: function (id) {
+        return self
+          .$apiCall("POST", "/hardware/audit/" + id)
+          .then((resp) => {
+            if (resp.data.status == "success") {
+              return resp.data.payload;
             }
             throw new Error(resp);
           });
@@ -74,6 +107,14 @@ function install(Vue) {
             return resp.data;
           }
           throw new Error(resp);
+        });
+      },
+      getUserById: function (id) {
+        return self.$apiCall("GET", "/users/" + id).then((resp) => {
+          if (resp.data && resp.data.id){
+            return resp.data;
+          }
+          throw new Error(`User with ID ${id} not found.`);
         });
       },
     };

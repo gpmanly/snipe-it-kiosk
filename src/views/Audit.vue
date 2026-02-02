@@ -48,8 +48,8 @@ export default {
     loading: false,
     fields: [
       { key: "asset_tag", label: "Tag" },
-      { key: "asset", label: "Asset" },
-      { key: "serial", label: "Serial" },
+      { key: "model.name", label: "Model" },
+      { key: "rtd_location.name", label: "Default Location" },
       { key: "state", label: "State" },
     ],
     items: [],
@@ -66,7 +66,7 @@ export default {
         } else {
           let i = this.items.push({ ...resp, state: 0 }) - 1;
           this.$apiCalls()
-            .auditAssetByTag(resp)
+            .auditAssetByTag(resp.asset_tag)
             .then((payload) => {
               this.items[i].state = payload;
             });

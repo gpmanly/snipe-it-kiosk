@@ -68,4 +68,25 @@ export default {
 .icon-text {
   font-size: 17px;
 }
+
+/* Global b-table spacing optimization */
+.b-table.table {
+  border-collapse: collapse !important; // removes white gaps
+}
+
+.b-table.table td,
+.b-table.table th {
+  padding: 0.35rem 0.5rem !important; // tighter spacing
+}
+
+/* Global font and zoom settings */
+html {
+  zoom: 1.50;
+}
+
+html, body {
+  font-size: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
 </style>
