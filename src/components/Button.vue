@@ -6,16 +6,17 @@
     "
   >
     <slot />
-    <span v-if="this.shortcut"> [{{ this.shortcut }}]</span>
+    <span v-if="this.shortcut && !isShortcutsDisabled">
+      [{{ this.shortcut }}]
+    </span>
     <Shortcut
-      v-if="this.shortcut != null"
+      v-if="this.shortcut != null && !isShortcutsDisabled"
       :shortcut="this.shortcut"
       :href="this.href"
       @click="(e) => this.$emit('click', e)"
     />
   </b-btn>
 </template>
-
 <script>
 import Shortcut from "./Shortcut.vue";
 export default {
@@ -31,7 +32,18 @@ export default {
       default: null,
     },
   },
+  data: () => ({
+    isShortcutsDisabled: false,
+  }),
+  mounted: function () {
+    // Listen for disable/enable shortcuts signal
+    this.$root.$on("disableShortcuts", (disabled) => {
+      this.isShortcutsDisabled = disabled;
+    });
+  },
+  beforeDestroy: function () {
+    this.$root.$off("disableShortcuts");
+  },
 };
 </script>
-
 <style></style>
