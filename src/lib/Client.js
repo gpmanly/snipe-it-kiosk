@@ -33,6 +33,18 @@ function install(Vue) {
           return resp.data;
         });
       },
+      getAssetByID: function (id) {
+        return self.$apiCall("GET", "/hardware/" + id).then((resp) => {
+          resp.data.status_label.__deployable = true;
+          if (
+            resp.data.status_label.status_meta == "deployed" ||
+            resp.data.status_label.status_meta == "undeployable"
+          ) {
+            resp.data.status_label.__deployable = false;
+          }
+          return resp.data;
+        });
+      },
       checkoutAssetByTag: function (tag, userId) {
         return self
           .$apiCall("POST", "/hardware/" + tag + "/checkout", {

@@ -1,12 +1,11 @@
 <template>
   <span></span>
 </template>
-
 <script>
 export default {
   name: "KeyboardReader",
   data: () => ({
-    clearInterval: null,
+    clearIntervalId: null,
     text: "",
     index: -1,
     instance: null,
@@ -18,7 +17,7 @@ export default {
     },
   },
   mounted: function () {
-    let self = this;
+    const self = this;
     if (window.onkeyup == null) {
       window.onkeyuphandlers = [];
       window.onkeyup = function (e) {
@@ -26,10 +25,13 @@ export default {
       };
     }
     this.instance = function (e) {
-      self.showAlert = false;
-      self.$emit("startReading");
-      if (e.key == "Enter" && self.match == null) {
-        clearInterval(self.clearInterval);
+      // Prevent browser's quick find feature when "/" is pressed
+      if (e.key === "/" || e.key === '"') {
+        e.preventDefault();
+      }
+
+      if (e.key === "Enter" && self.match == null) {
+        clearInterval(self.clearIntervalId);
         self.$emit("read", self.text);
         self.text = "";
       } else {
@@ -42,7 +44,7 @@ export default {
             self.$emit("read", self.text);
             self.text = "";
           }
-          clearInterval(self.clearInterval);
+          clearInterval(self.clearIntervalId);
         }
         console.log(self.text);
         self.setClearInterval();
@@ -61,16 +63,16 @@ export default {
       window.onkeyuphandlers.indexOf(this.instance),
       1
     );
-    if (window.onkeyuphandlers.length == 0) {
+    if (window.onkeyuphandlers.length === 0) {
       window.onkeyup = null;
     }
-    clearInterval(this.clearInterval);
+    clearInterval(this.clearIntervalId);
   },
   methods: {
     setClearInterval: function () {
-      let self = this;
-      clearInterval(this.clearInterval);
-      this.clearInterval = setInterval(() => (self.text = ""), 2000);
+      const self = this;
+      clearInterval(this.clearIntervalId);
+      this.clearIntervalId = setInterval(() => (self.text = ""), 2000);
     },
   },
 };
